@@ -72,6 +72,19 @@ print(df_sin_out["categoria_precio"].value_counts())
 
 # %% [markdown]
 # ## 7. Agrupación con groupby  (Integrante A)
+# 1. Precio promedio y mediano por zona
+print(df_sin_out.groupby("neighbourhood_group")["price"].agg(["count", "mean", "median"]).round(1).sort_values("mean", ascending=False))
+# 2. Precio mediano por tipo de habitación
+print(df_sin_out.groupby("room_type")["price"].agg(["count", "median"]))
+
+# 3. Tipo de habitación por zona (porcentaje)
+print((df_sin_out.groupby("neighbourhood_group")["room_type"].value_counts(normalize=True) * 100).round(1).unstack())
+# 4. Barrios más caros (mínimo 50 publicaciones)
+barrios = df_sin_out.groupby("neighbourhood")["price"].agg(["count", "mean"])
+print(barrios[barrios["count"] >= 50].sort_values("mean", ascending=False).head(10).round(1))
+
+# 5. Disponibilidad e ingreso estimado por zona
+print(df_sin_out.groupby("neighbourhood_group")[["availability_365", "ingreso_estimado"]].mean().round(1))
 
 # %% [markdown]
 # ## 8. Visualizaciones  (Integrante B)
