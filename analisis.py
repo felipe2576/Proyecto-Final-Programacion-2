@@ -19,8 +19,37 @@ print(df.dtypes)
 print(df.head())
 print(df.describe().round(2).T)
 print(df.describe(include="object").T)
+
+
+
+
 # %% [markdown]
 # ## 2. Manejo de datos faltantes  (Integrante B)
+# %%
+sns.heatmap(df.isna(), cbar=False)
+plt.title("Datos faltantes antes de la limpieza")
+plt.show()
+
+faltantes = df.isna().sum()
+porcentaje = (faltantes / len(df) * 100).round(2)
+pd.DataFrame({"faltantes": faltantes, "%": porcentaje})[faltantes > 0]
+
+# %%
+sin_resenas = df["number_of_reviews"] == 0
+print("Alojamientos sin reseñas:", sin_resenas.sum())
+print("Coinciden con los faltantes:", (df["last_review"].isna() == sin_resenas).all())
+
+# %%
+df["name"] = df["name"].fillna("Desconocido")
+df["host_name"] = df["host_name"].fillna("Desconocido")
+df["reviews_per_month"] = df["reviews_per_month"].fillna(0)
+df["last_review"] = pd.to_datetime(df["last_review"])
+
+sns.heatmap(df.isna(), cbar=False)
+plt.title("Datos faltantes después de la limpieza")
+plt.show()
+
+
 
 # %% [markdown]
 # ## 3. Identificación de outliers  (Integrante A)
@@ -52,6 +81,28 @@ plt.show()
 
 # %% [markdown]
 # ## 4. Valores inconsistentes y duplicados  (Integrante B)
+# %%
+print("Filas duplicadas completas:", df.duplicated().sum())
+print("IDs repetidos:", df["id"].duplicated().sum())
+
+# %%
+cols_texto = ["name", "host_name", "neighbourhood_group", "neighbourhood", "room_type"]
+
+for col in cols_texto:
+    n_espacios = (df[col] != df[col].str.strip()).sum()
+    print(f"{col}: {n_espacios} con espacios extra, {df[col].nunique()} valores únicos")
+
+print(df["neighbourhood_group"].value_counts())
+print(df["room_type"].value_counts())
+
+# %%
+df["name"] = df["name"].str.strip()
+
+print("Nombres con espacios extra después:", (df["name"] != df["name"].str.strip()).sum())
+print("Registros después de la limpieza:", len(df))
+
+
+
 
 # %% [markdown]
 # ## 5. Creación de variables  (Integrante A)
@@ -68,8 +119,49 @@ print(df_sin_out["categoria_precio"].value_counts())
 # Conclusión: el 79,6% de las publicaciones tiene reseñas. Por precio, 18.704 son de categoría Medio,
 # 15.232 Económico, 11.578 Alto y 3.117 Lujo.
 # Nota: noches_ocupadas e ingreso_estimado son aproximaciones: suponen que las noches no disponibles están ocupadas.
+
+
+
+
+
+
+
 # %% [markdown]
 # ## 6. Filtrado y condiciones en pandas  (Integrante B)
+# %%
+# Filtro 1: alojamientos de lujo (más de 500 dólares por noche)
+caros = df[df["price"] > 500]
+print("Cantidad:", len(caros), "|", round(len(caros) / len(df) * 100, 2), "%")
+print(caros["neighbourhood_group"].value_counts())
+
+# %%
+# Filtro 2: habitaciones privadas baratas en Manhattan (menos de 100 dólares)
+baratas = df[(df["room_type"] == "Private room")
+             & (df["neighbourhood_group"] == "Manhattan")
+             & (df["price"] < 100)]
+print("Cantidad:", len(baratas))
+print("Precio promedio:", round(baratas["price"].mean(), 2))
+
+# %%
+# Filtro 3: muy populares (más de 100 reseñas) y con alta disponibilidad
+populares = df[(df["number_of_reviews"] > 100) & (df["availability_365"] > 300)]
+print("Cantidad:", len(populares))
+print(populares["room_type"].value_counts())
+
+# %%
+# Filtro 4: estadías largas (30 noches o más)
+largas = df[df["minimum_nights"] >= 30]
+print("Cantidad:", len(largas), "|", round(len(largas) / len(df) * 100, 2), "%")
+print("Precio promedio estadías largas:", round(largas["price"].mean(), 2))
+print("Precio promedio general:", round(df["price"].mean(), 2))
+
+# %%
+# Filtro 5: anfitriones con más de 10 propiedades
+grandes = df[df["calculated_host_listings_count"] > 10]
+print("Cantidad:", len(grandes), "|", round(len(grandes) / len(df) * 100, 2), "%")
+print(grandes["neighbourhood_group"].value_counts())
+
+
 
 # %% [markdown]
 # ## 7. Agrupación con groupby  (Integrante A)
@@ -87,8 +179,64 @@ print(barrios[barrios["count"] >= 50].sort_values("mean", ascending=False).head(
 # 5. Disponibilidad e ingreso estimado por zona
 print(df_sin_out.groupby("neighbourhood_group")[["availability_365", "ingreso_estimado"]].mean().round(1))
 
+
+
+
+
+
+
+
 # %% [markdown]
 # ## 8. Visualizaciones  (Integrante B)
+# %%
+# Gráfico 1: alojamientos por zona
+plt.figure(figsize=(8, 5))
+sns.countplot(data=df, x="neighbourhood_group",
+              order=df["neighbourhood_group"].value_counts().index)
+plt.title("Cantidad de alojamientos por zona")
+plt.xlabel("Zona")
+plt.ylabel("Cantidad")
+plt.show()
+
+# %%
+# Gráfico 2: distribución del precio (hasta 500 dólares)
+plt.figure(figsize=(8, 5))
+sns.histplot(df[df["price"] <= 500]["price"], bins=40, kde=True)
+plt.title("Distribución del precio por noche (hasta 500 USD)")
+plt.xlabel("Precio (USD)")
+plt.ylabel("Cantidad")
+plt.show()
+
+# %%
+# Gráfico 3: precio por tipo de habitación (hasta 500 dólares)
+plt.figure(figsize=(8, 5))
+sns.boxplot(data=df[df["price"] <= 500], x="room_type", y="price")
+plt.title("Precio por tipo de habitación (hasta 500 USD)")
+plt.xlabel("Tipo de habitación")
+plt.ylabel("Precio (USD)")
+plt.show()
+
+# %%
+# Gráfico 4: precio promedio por zona
+plt.figure(figsize=(8, 5))
+promedio_zona = df.groupby("neighbourhood_group")["price"].mean().sort_values(ascending=False)
+sns.barplot(x=promedio_zona.index, y=promedio_zona.values)
+plt.title("Precio promedio por zona")
+plt.xlabel("Zona")
+plt.ylabel("Precio promedio (USD)")
+plt.show()
+print(promedio_zona.round(2))
+
+# %%
+# Gráfico 5: correlación entre variables numéricas
+plt.figure(figsize=(9, 6))
+numericas = ["price", "minimum_nights", "number_of_reviews",
+             "reviews_per_month", "calculated_host_listings_count", "availability_365"]
+sns.heatmap(df[numericas].corr(), annot=True, fmt=".2f", cmap="coolwarm")
+plt.title("Correlación entre variables numéricas")
+plt.show()
+
+
 
 # %% [markdown]
 # ## 9. Conclusiones finales  (Integrante A)
