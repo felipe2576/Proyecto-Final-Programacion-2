@@ -54,7 +54,19 @@ plt.show()
 
 # %% [markdown]
 # ## 5. Creación de variables  (Integrante A)
+df_sin_out["tiene_resenas"] = df_sin_out["number_of_reviews"] > 0
+df_sin_out["noches_ocupadas"] = 365 - df_sin_out["availability_365"]
+df_sin_out["ingreso_estimado"] = df_sin_out["price"] * df_sin_out["noches_ocupadas"]
+df_sin_out["categoria_precio"] = pd.cut(df_sin_out["price"], bins=[0, 75, 150, 300, 1000],
+                                        labels=["Económico", "Medio", "Alto", "Lujo"])
 
+print(df_sin_out[["price", "availability_365", "noches_ocupadas", "ingreso_estimado", "categoria_precio"]].head())
+print(df_sin_out["tiene_resenas"].value_counts(normalize=True).round(3))
+print(df_sin_out["categoria_precio"].value_counts())
+
+# Conclusión: el 79,6% de las publicaciones tiene reseñas. Por precio, 18.704 son de categoría Medio,
+# 15.232 Económico, 11.578 Alto y 3.117 Lujo.
+# Nota: noches_ocupadas e ingreso_estimado son aproximaciones: suponen que las noches no disponibles están ocupadas.
 # %% [markdown]
 # ## 6. Filtrado y condiciones en pandas  (Integrante B)
 
