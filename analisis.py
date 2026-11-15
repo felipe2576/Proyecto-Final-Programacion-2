@@ -11,6 +11,7 @@ import seaborn as sns
 df = pd.read_csv("datos/AB_NYC_2019.csv")
 
 # %% [markdown]
+# ## 1. Carga e inspección inicial de los datos  (Integrante A)
 # ## 1. 
 df = pd.read_csv("../datos/AB_NYC_2019.csv")
 print("Filas y columnas:", df.shape)
