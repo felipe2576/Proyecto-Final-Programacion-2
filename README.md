@@ -31,3 +31,10 @@ Contiene los alojamientos publicados en Airbnb en Nueva York durante 2019.
 | reviews_per_month | Numérica continua | Promedio de reseñas por mes | Reseñas/mes (0 si no tiene reseñas) |
 | calculated_host_listings_count | Numérica discreta | Propiedades que tiene el anfitrión | Cantidad |
 | availability_365 | Numérica discreta | Días disponibles al año | 0 a 365 |
+## Conclusiones
+
+1. **Concentración:** Manhattan y Brooklyn reúnen el 85,4% de las 48.895 publicaciones.
+2. **Precio por zona:** Manhattan es la zona más cara (mediana de 149 dólares) y el Bronx la más barata (65). Los 10 barrios más caros son de Manhattan, con Tribeca a la cabeza.
+3. **Tipo de habitación:** es lo que más pesa en el precio: el apartamento completo (mediana de 160 dólares) cuesta más del doble que la habitación privada (70).
+4. **Valores extremos:** hay precios de hasta 10.000 dólares y estadías mínimas de hasta 1.250 noches. Se excluyó el 0,5% de los registros para no distorsionar los promedios.
+5. **Reseñas e ingreso:** el 79,6% de las publicaciones tiene reseñas y el ingreso estimado es más alto en Manhattan que en el Bronx, aunque es solo una aproximación.
