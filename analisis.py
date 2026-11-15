@@ -23,6 +23,31 @@ print(df.describe(include="object").T)
 
 # %% [markdown]
 # ## 3. Identificación de outliers  (Integrante A)
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+cols = ["price", "minimum_nights", "number_of_reviews", "calculated_host_listings_count"]
+
+fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+for ax, col in zip(axes, cols):
+    sns.boxplot(y=df[col], ax=ax)
+    ax.set_title(col)
+plt.tight_layout()
+plt.show()
+
+for col in cols:
+    q1, q3 = df[col].quantile([0.25, 0.75])
+    limite = q3 + 1.5 * (q3 - q1)
+    print(col, "límite superior:", limite, "outliers:", (df[col] > limite).sum(), "máximo:", df[col].max())
+
+df_sin_out = df[(df["price"] > 0) & (df["price"] <= 1000) & (df["minimum_nights"] <= 365)].copy()
+print("Registros excluidos:", len(df) - len(df_sin_out))
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+sns.boxplot(y=df_sin_out["price"], ax=axes[0])
+sns.boxplot(y=df_sin_out["minimum_nights"], ax=axes[1])
+plt.show()
+
 
 # %% [markdown]
 # ## 4. Valores inconsistentes y duplicados  (Integrante B)
