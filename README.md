@@ -38,3 +38,4 @@ Contiene los alojamientos publicados en Airbnb en Nueva York durante 2019.
 3. **Tipo de habitación:** es lo que más pesa en el precio: el apartamento completo (mediana de 160 dólares) cuesta más del doble que la habitación privada (70).
 4. **Valores extremos:** hay precios de hasta 10.000 dólares y estadías mínimas de hasta 1.250 noches. Se excluyó el 0,5% de los registros para no distorsionar los promedios.
 5. **Reseñas e ingreso:** el 79,6% de las publicaciones tiene reseñas y el ingreso estimado es más alto en Manhattan que en el Bronx, aunque es solo una aproximación.
+## Estudiar iloc
